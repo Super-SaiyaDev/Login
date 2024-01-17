@@ -26,9 +26,17 @@ db.connect((err) => {
 });
 
 app.post("/login", (req, res) => {
-  const valor = req.body.value;
-  const query = "SELECT * FROM usuarios where Usuario = ? and Clave = ?";
-  db.query(query, valor, (err, res) => {});
+  const { username, password } = req.body;
+  const query = "SELECT * FROM usuarios WHERE Usuario = ? AND Clave = ?";
+
+  db.query(query, [username, password], (err, result) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send("Error al ejecutar la consulta");
+    } else {
+      res.json(result);
+    }
+  });
 });
 
 app.listen(3000, () => console.log(`Escuchando en el puerto ${3000}....`)); // También corregí este console.log
