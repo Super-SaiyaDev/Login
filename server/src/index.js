@@ -5,10 +5,7 @@ const cors = require("cors");
 const app = express();
 
 app.use(cors());
-app.use(express.json()); // Aquí está la corrección
-
-// conexion a la base de datos
-
+// Crear la conexión a la base de datos
 const db = mysql.createConnection({
   host: "localhost",
   user: "root",
@@ -20,23 +17,25 @@ const db = mysql.createConnection({
 db.connect((err) => {
   if (err) {
     throw err;
-  } else {
-    console.log("the conexion is true");
   }
+  console.log("Conexión a la base de datos establecida");
 });
 
 app.post("/login", (req, res) => {
-  const { username, password } = req.body;
-  const query = "SELECT * FROM usuarios WHERE Usuario = ? AND Clave = ?";
+  const {value} = req.body;
+  const query = "SELECT * FROM `usuarios` WHERE usuario = ? and clave = ?";
+  console.log(value);
 
-  db.query(query, [username, password], (err, result) => {
+  db.query(query, value, (err, result) => {
     if (err) {
       console.error(err);
       res.status(500).send("Error al ejecutar la consulta");
+    } else if (result.length > 0) {
+      res.json({ success: true });
     } else {
-      res.json(result);
+      res.json({ success: false });
     }
   });
 });
 
-app.listen(3000, () => console.log(`Escuchando en el puerto ${3000}....`)); // También corregí este console.log
+app.listen(8080, console.log(`listing en el port ${8080}....`));
